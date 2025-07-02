@@ -1,19 +1,31 @@
 import type React from "react"
-import { AppSidebar } from "@/components/app-sidebar"
-import { AppHeader } from "@/components/app-header"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import "./globals.css"
+import { cn } from "@/lib/utils"
+import { Toaster } from "@/components/ui/toaster"
+import { ThemeProvider } from "@/components/theme-provider"
 
-export default function DashboardLayout({
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
+
+export const metadata: Metadata = {
+  title: "CloudCRM Pro",
+  description: "Die All-in-One Lösung für das moderne Handwerk.",
+}
+
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40">
-      <AppSidebar />
-      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-        <AppHeader />
-        <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">{children}</main>
-      </div>
-    </div>
+    <html lang="de" suppressHydrationWarning>
+      <body className={cn("min-h-screen bg-background font-sans antialiased", inter.variable)}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          {children}
+          <Toaster />
+        </ThemeProvider>
+      </body>
+    </html>
   )
 }
