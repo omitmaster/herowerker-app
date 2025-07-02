@@ -2,12 +2,11 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
-import { cookies } from "next/headers"
+import type { FormData } from "next/server"
 
 // Diese eine Aktion handhabt das Erstellen UND Aktualisieren
 export async function saveProject(formData: FormData) {
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createClient() // KORREKTUR: Aufruf ohne Argumente
 
   const { data } = await supabase.auth.getUser()
   const user = data?.user
