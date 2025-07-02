@@ -180,9 +180,10 @@ const recentActivities = [
 
 /**
  * The root page of the application.
- * This page automatically redirects the user to the login page.
+ * This page automatically redirects the user to the dashboard page.
  */
 export default function HomePage() {
-  // Trigger a redirect to the login page.
-  redirect("/login")
+  // For now, redirect straight to the main dashboard.
+  // Later, this can be a landing page or redirect to /login.
+  redirect("/dashboard")
 }
