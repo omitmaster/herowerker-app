@@ -2,14 +2,13 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
-import type { FormData } from "next/server"
 
-// Diese eine Aktion handhabt das Erstellen UND Aktualisieren
-export async function saveProject(formData: FormData) {
-  const supabase = createClient() // KORREKTUR: Aufruf ohne Argumente
+// Angepasst für useActionState: nimmt den vorherigen Zustand als erstes Argument
+export async function saveProject(prevState: any, formData: FormData) {
+  const supabase = createClient()
 
   const { data } = await supabase.auth.getUser()
-  const user = data?.user
+  const user = data.user
 
   if (!user) {
     return { success: false, message: "Nicht authentifiziert" }
