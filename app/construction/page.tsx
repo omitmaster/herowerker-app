@@ -1,24 +1,22 @@
 import { createClient } from "@/lib/supabase/server"
-import ConstructionClientPage from "./client-page" // KORREKTUR: Import als default
+import ConstructionClientPage from "./client-page"
+import type { Project } from "@/types/project"
 
 export default async function ConstructionProjectsPage() {
-  const supabase = createClient() // KORREKTUR: Aufruf ohne Argumente
+  const supabase = createClient()
 
-  // Fetching data on the server
   const { data: projectsData, error } = await supabase
     .from("projects")
     .select("*")
-    .order("created_at", { ascending: false }) // Corrected syntax
+    .order("created_at", { ascending: false })
 
   if (error) {
     console.error("Error fetching projects: ", error)
-    // Return an error state or an empty array
+    // Render the page with an empty array in case of error
     return <ConstructionClientPage initialProjects={[]} />
   }
 
-  // Ensure projects is an array, even if data is null
-  const projects = projectsData ?? []
+  const projects = (projectsData as Project[]) ?? []
 
-  // Passing data to the client component
   return <ConstructionClientPage initialProjects={projects} />
 }
