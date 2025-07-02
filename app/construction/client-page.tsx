@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useActionState } from "react" // KORRIGIERTE ZEILE
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -19,7 +19,6 @@ import { PlusCircle, Pencil } from "lucide-react"
 import { saveProject } from "./actions"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { Project } from "@/types/project"
-import { useActionState } from "@/hooks/useActionState" // Import useActionState hook
 
 const initialState = {
   message: "",
