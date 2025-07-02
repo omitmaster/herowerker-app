@@ -1,135 +1,80 @@
-"use client"
-
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Clock, User, FileText, Calendar } from "lucide-react"
+import { Building2, FileText, Users, GanttChartSquare } from "lucide-react"
+import Link from "next/link"
 
 export default function DashboardPage() {
+  const kpiData = [
+    { title: "Aktive Projekte", value: "12", change: "+2 seit letzter Woche", icon: Building2 },
+    { title: "Offene Rechnungen", value: "8", change: "€12.4k fällig", icon: FileText },
+    { title: "Neue Kunden", value: "3", change: "+1 diesen Monat", icon: Users },
+    { title: "Anstehende Aufgaben", value: "24", change: "5 überfällig", icon: GanttChartSquare },
+  ]
+
   const recentProjects = [
-    {
-      id: 1,
-      title: "Sophie Graichen Hansehaus Immobilienverwaltung",
-      subtitle: "Hansehaus Immobilienverwaltung",
-      time: "Gestern · 18:42",
-      assignee: "Timo Brandt",
-      status: "active",
-    },
-    {
-      id: 2,
-      title: "Thomas Bank 110,00 qm Hausrenovierung",
-      subtitle: "Thomas Bank",
-      time: "Gestern · 17:03",
-      assignee: "Afrim Sinja",
-      status: "urgent",
-    },
-    {
-      id: 3,
-      title: "Jan Thomen Malerarbeiten Haus Streichen 175,00 qm",
-      subtitle: "UEBERKOPF GmbH Riggingservice & Veranstaltungstechnik",
-      time: "Gestern · 16:24",
-      assignee: "Timo Brandt",
-      status: "active",
-    },
-    {
-      id: 4,
-      title: "Terrania AG Hauptverwaltung",
-      subtitle: "Terrania AG Hauptverwaltung z.H Sebastian Krüger",
-      time: "Mo., 30.06.2025 · 19:38",
-      assignee: "Timo Brandt",
-      status: "active",
-    },
-    {
-      id: 5,
-      title: "Angela Rohwer 10 Rahmen Altbau Holztürrahmen",
-      subtitle: "Angela Rohwer",
-      time: "Mo., 30.06.2025 · 19:06",
-      assignee: "Timo Brandt",
-      status: "active",
-    },
+    { id: "1", name: "EFH Neubau Familie Meier", status: "In Arbeit", budget: 85000 },
+    { id: "2", name: "Bürokomplex Vision One", status: "Planung", budget: 250000 },
+    { id: "3", name: "Dachsanierung Altbau", status: "Abgeschlossen", budget: 25000 },
   ]
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-6">
-        <h1 className="text-2xl font-bold text-gray-900">Guten Morgen, Timo!</h1>
+    <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
+      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
+        {kpiData.map((kpi) => (
+          <Card key={kpi.title}>
+            <CardHeader className="pb-2 flex flex-row items-center justify-between">
+              <CardDescription>{kpi.title}</CardDescription>
+              <kpi.icon className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <CardTitle className="text-4xl">{kpi.value}</CardTitle>
+              <div className="text-xs text-muted-foreground">{kpi.change}</div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
-
-      {/* Main Content */}
-      <div className="flex-1 p-6 space-y-6">
-        {/* Recently Edited Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Zuletzt bearbeitet</h2>
-
-            <div className="space-y-4">
+      <Card>
+        <CardHeader className="px-7">
+          <CardTitle>Neueste Projekte</CardTitle>
+          <CardDescription>Ein Überblick über Ihre aktuellsten Bauprojekte.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Projekt</TableHead>
+                <TableHead className="hidden sm:table-cell">Status</TableHead>
+                <TableHead className="hidden md:table-cell">Budget</TableHead>
+                <TableHead className="text-right">Aktion</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {recentProjects.map((project) => (
-                <div
-                  key={project.id}
-                  className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
-                >
-                  <div className="flex-1">
-                    <h3 className="font-medium text-gray-900 mb-1">{project.title}</h3>
-                    <p className="text-sm text-gray-600">{project.subtitle}</p>
-                  </div>
-
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-4 w-4" />
-                      {project.time}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <User className="h-4 w-4" />
-                      {project.assignee}
-                    </div>
-                    {project.status === "urgent" && <div className="h-2 w-2 rounded-full bg-red-500" />}
-                    {project.status === "active" && <div className="h-2 w-2 rounded-full bg-blue-500" />}
-                  </div>
-                </div>
+                <TableRow key={project.id}>
+                  <TableCell>
+                    <div className="font-medium">{project.name}</div>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    <Badge className="text-xs" variant={project.status === "Abgeschlossen" ? "secondary" : "default"}>
+                      {project.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(project.budget)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Link href={`/construction/${project.id}`}>
+                      <Button variant="default">Details</Button>
+                    </Link>
+                  </TableCell>
+                </TableRow>
               ))}
-            </div>
-
-            <div className="mt-6">
-              <Button variant="link" className="text-teal-600 hover:text-teal-700 p-0">
-                Projekte anzeigen
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="bg-gray-100 border-gray-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">Letzte 90 Tage</p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-3xl font-bold text-gray-900">8</span>
-                    <span className="text-sm text-gray-600">Offene Rechnungen</span>
-                  </div>
-                </div>
-                <FileText className="h-8 w-8 text-gray-400" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gray-100 border-gray-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">Offene Urlaubsanträge</p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-3xl font-bold text-gray-900">0</span>
-                    <span className="text-sm text-gray-600">Offene Urlaubsanträge</span>
-                  </div>
-                </div>
-                <Calendar className="h-8 w-8 text-gray-400" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   )
 }
