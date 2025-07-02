@@ -3,7 +3,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 
-// Angepasst für useActionState: nimmt den vorherigen Zustand als erstes Argument
 export async function saveProject(prevState: any, formData: FormData) {
   const supabase = createClient()
 
@@ -21,8 +20,8 @@ export async function saveProject(prevState: any, formData: FormData) {
   const endDate = formData.get("end_date") as string
   const status = formData.get("status") as string
 
-  if (!name || !status) {
-    return { success: false, message: "Projektname und Status sind erforderlich." }
+  if (!name) {
+    return { success: false, message: "Projektname ist erforderlich" }
   }
 
   const projectData = {
@@ -37,11 +36,11 @@ export async function saveProject(prevState: any, formData: FormData) {
   let error
 
   if (id) {
-    // Bestehendes Projekt aktualisieren
+    // Update existing project
     const { error: updateError } = await supabase.from("projects").update(projectData).eq("id", id)
     error = updateError
   } else {
-    // Neues Projekt erstellen
+    // Create new project
     const { error: insertError } = await supabase.from("projects").insert(projectData)
     error = insertError
   }
