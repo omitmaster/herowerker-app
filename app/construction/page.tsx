@@ -1,6 +1,6 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { PlusCircle } from "lucide-react"
@@ -25,6 +25,10 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 import { Separator } from "@/components/ui/separator"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbLink } from "@/components/ui/breadcrumb"
 import Link from "next/link"
+import { createClient } from "@/lib/supabase/server"
+import { cookies } from "next/headers"
+import type { Project } from "@/types/project" // We will create this type file next
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 // Mock Data für die Übersicht
 const mockStats = {
@@ -113,7 +117,20 @@ const constructionModules = [
   },
 ]
 
-export default function ConstructionOverviewPage() {
+export default async function ConstructionOverviewPage() {
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data: projects, error } = await supabase
+    .from("projects")
+    .select("*")
+    .order("created_at", { ascending: false })
+
+  if (error) {
+    console.error("Error fetching projects:", error)
+    // Optionally, render an error state
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -322,11 +339,11 @@ export default function ConstructionOverviewPage() {
 
           {/* Bauprojekte */}
           <div className="mt-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-lg font-semibold md:text-2xl">Bauprojekte</h1>
-              <Button className="ml-auto gap-1">
-                <PlusCircle className="h-4 w-4" />
-                Neues Projekt
+            <div className="flex items-center">
+              <h1 className="font-semibold text-lg md:text-2xl">Bauprojekte</h1>
+              <Button className="ml-auto">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Neues Projekt anlegen
               </Button>
             </div>
             <Card className="mt-4">
@@ -337,9 +354,41 @@ export default function ConstructionOverviewPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center text-muted-foreground py-12">
-                  <p>Sie haben noch keine Projekte angelegt.</p>
-                  <p>Klicken Sie oben rechts auf "Neues Projekt", um zu starten.</p>
+                <div className="border rounded-lg">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Projektname</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Startdatum</TableHead>
+                        <TableHead>Enddatum</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {projects && projects.length > 0 ? (
+                        projects.map((project: Project) => (
+                          <TableRow key={project.id}>
+                            <TableCell className="font-medium">{project.name}</TableCell>
+                            <TableCell>
+                              <Badge>{project.status}</Badge>
+                            </TableCell>
+                            <TableCell>
+                              {project.start_date ? new Date(project.start_date).toLocaleDateString("de-DE") : "-"}
+                            </TableCell>
+                            <TableCell>
+                              {project.end_date ? new Date(project.end_date).toLocaleDateString("de-DE") : "-"}
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={4} className="h-24 text-center">
+                            Sie haben noch keine Projekte angelegt.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
                 </div>
               </CardContent>
             </Card>
