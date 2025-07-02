@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useActionState } from "react"
+import { useState, useEffect } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -18,67 +18,58 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { PlusCircle, Pencil } from "lucide-react"
 import { saveProject } from "./actions"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-\
-\
-{
-  Project
-  \
-}
-from
-;("@/types/project")
-\
-const initialState = \
-{
-  message: "",\
+import type { Project } from "@/types/project"
+import { useActionState } from "@/hooks/useActionState" // Import useActionState hook
+
+const initialState = {
+  message: "",
   success: false,
-\
 }
-\
-export default function ConstructionClientPage(\{ initialProjects \}: \{ initialProjects: Project[] \})
-\
-{
+
+export default function ConstructionClientPage({ initialProjects }: { initialProjects: Project[] }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingProject, setEditingProject] = useState<Project | null>(null)
 
   const [state, formAction, isPending] = useActionState(saveProject, initialState)
-\
-  useEffect(() => \
-    if (state?.success) \
+
+  useEffect(() => {
+    if (state?.success) {
       setIsDialogOpen(false)
-    \
-    // Hier könnten wir eine Benachrichtigung für state.message anzeigen\
-  \, [state])
-\
-  const handleCreateNew = () => \\
+    }
+  }, [state])
+
+  const handleCreateNew = () => {
     setEditingProject(null)
     setIsDialogOpen(true)
-  \
-\
-  const handleEdit = (project: Project) => \\
+  }
+
+  const handleEdit = (project: Project) => {
     setEditingProject(project)
     setIsDialogOpen(true)
-  \
+  }
+
+  const projectStatusOptions = ["Geplant", "In Arbeit", "Pausiert", "Abgeschlossen", "Abgesagt"]
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
       <div className="flex items-center">
         <h1 className="font-semibold text-lg md:text-2xl">Bauprojekte</h1>
-        <Button className="ml-auto\" onClick=\{handleCreateNew\}>
+        <Button className="ml-auto" onClick={handleCreateNew}>
           <PlusCircle className="mr-2 h-4 w-4" />
           Neues Projekt anlegen
         </Button>
       </div>
-\
-      <Dialog open=\{isDialogOpen\} onOpenChange=\{setIsDialogOpen\}>
-        <DialogContent className="sm:max-w-[425px]">\
-          <form action=\{formAction\} key=\{editingProject?.id ?? "new"\}>
-            \{editingProject && <input type="hidden" name="id\" value=\{editingProject.id\} />\}
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <form action={formAction} key={editingProject?.id ?? "new"}>
+            {editingProject && <input type="hidden" name="id" value={editingProject.id} />}
             <DialogHeader>
-              <DialogTitle>\{editingProject ? "Projekt bearbeiten" : "Neues Projekt anlegen"\}</DialogTitle>
+              <DialogTitle>{editingProject ? "Projekt bearbeiten" : "Neues Projekt anlegen"}</DialogTitle>
               <DialogDescription>
-                \{editingProject
+                {editingProject
                   ? "Ändern Sie die Details Ihres Projekts."
-                  : "Füllen Sie die Details für Ihr neues Bauprojekt aus."\}
+                  : "Füllen Sie die Details für Ihr neues Bauprojekt aus."}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -89,8 +80,8 @@ export default function ConstructionClientPage(\{ initialProjects \}: \{ initial
                 <Input
                   id="name"
                   name="name"
-                  required\
-                  defaultValue=\{editingProject?.name ?? ""\}
+                  required
+                  defaultValue={editingProject?.name ?? ""}
                   className="col-span-3"
                 />
               </div>
@@ -100,8 +91,8 @@ export default function ConstructionClientPage(\{ initialProjects \}: \{ initial
                 </Label>
                 <Input
                   id="description"
-                  name="description"\
-                  defaultValue=\{editingProject?.description ?? ""\}
+                  name="description"
+                  defaultValue={editingProject?.description ?? ""}
                   className="col-span-3"
                 />
               </div>
@@ -109,16 +100,16 @@ export default function ConstructionClientPage(\{ initialProjects \}: \{ initial
                 <Label htmlFor="status" className="text-right">
                   Status
                 </Label>
-                <Select name="status\" defaultValue=\{editingProject?.status ?? "Geplant"\}>
+                <Select name="status" defaultValue={editingProject?.status ?? "Geplant"}>
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Status auswählen" />
                   </SelectTrigger>
                   <SelectContent>
-                    \{["Geplant", "In Arbeit", "Pausiert", "Abgeschlossen", "Abgesagt"].map((status) => (\
-                      <SelectItem key=\{status\} value=\{status\}>\
-                        \{status\}\
+                    {projectStatusOptions.map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {status}
                       </SelectItem>
-                    ))\}
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -129,8 +120,8 @@ export default function ConstructionClientPage(\{ initialProjects \}: \{ initial
                 <Input
                   id="start_date"
                   name="start_date"
-                  type="date"\
-                  defaultValue=\{editingProject?.start_date?.split("T")[0] ?? ""\}
+                  type="date"
+                  defaultValue={editingProject?.start_date?.split("T")[0] ?? ""}
                   className="col-span-3"
                 />
               </div>
@@ -141,18 +132,18 @@ export default function ConstructionClientPage(\{ initialProjects \}: \{ initial
                 <Input
                   id="end_date"
                   name="end_date"
-                  type="date"\
-                  defaultValue=\{editingProject?.end_date?.split("T")[0] ?? ""\}
+                  type="date"
+                  defaultValue={editingProject?.end_date?.split("T")[0] ?? ""}
                   className="col-span-3"
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button type="button" variant="ghost\" onClick=\{() => setIsDialogOpen(false)\}>
+              <Button type="button" variant="ghost" onClick={() => setIsDialogOpen(false)}>
                 Abbrechen
               </Button>
-              <Button type="submit\" disabled=\{isPending\}>
-                \{isPending ? "Wird gespeichert..." : "Projekt speichern"\}
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Wird gespeichert..." : "Projekt speichern"}
               </Button>
             </DialogFooter>
           </form>
@@ -177,21 +168,21 @@ export default function ConstructionClientPage(\{ initialProjects \}: \{ initial
                 </TableRow>
               </TableHeader>
               <TableBody>
-                \{initialProjects && initialProjects.length > 0 ? (
-                  initialProjects.map((project: Project) => (\
-                    <TableRow key=\{project.id\}>
-                      <TableCell className="font-medium">\{project.name\}</TableCell>
+                {initialProjects && initialProjects.length > 0 ? (
+                  initialProjects.map((project: Project) => (
+                    <TableRow key={project.id}>
+                      <TableCell className="font-medium">{project.name}</TableCell>
                       <TableCell>
-                        <Badge>\{project.status\}</Badge>\
+                        <Badge>{project.status}</Badge>
                       </TableCell>
                       <TableCell>
-                        \{project.start_date ? new Date(project.start_date).toLocaleDateString("de-DE") : "-"\}
+                        {project.start_date ? new Date(project.start_date).toLocaleDateString("de-DE") : "-"}
                       </TableCell>
                       <TableCell>
-                        \{project.end_date ? new Date(project.end_date).toLocaleDateString("de-DE") : "-"\}
+                        {project.end_date ? new Date(project.end_date).toLocaleDateString("de-DE") : "-"}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="icon\" onClick=\{() => handleEdit(project)\}>
+                        <Button variant="ghost" size="icon" onClick={() => handleEdit(project)}>
                           <Pencil className="h-4 w-4" />
                           <span className="sr-only">Bearbeiten</span>
                         </Button>
@@ -199,17 +190,17 @@ export default function ConstructionClientPage(\{ initialProjects \}: \{ initial
                     </TableRow>
                   ))
                 ) : (
-                  <TableRow>\
-                    <TableCell colSpan=\{5\} className="h-24 text-center">
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-24 text-center">
                       Sie haben noch keine Projekte angelegt.
                     </TableCell>
                   </TableRow>
-                )\}
+                )}
               </TableBody>
             </Table>
           </div>
-        </CardContent>\
+        </CardContent>
       </Card>
     </div>
-  )\
-\}
+  )
+}
