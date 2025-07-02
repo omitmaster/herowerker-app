@@ -1,3 +1,3 @@
 # herowerker-app
 Unsere Software
-Setup abgeschlossen.
+VERSION 2 - DEPLOYMENT VERSUCH
