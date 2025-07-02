@@ -7,17 +7,17 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "CloudCRM Pro",
-  description: "Die All-in-One Lösung für Handwerker.",
+  description: "Ihre All-in-One Lösung für das Handwerk.",
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="de" suppressHydrationWarning>
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.className} bg-muted/40`}>{children}</body>
     </html>
   )
 }
