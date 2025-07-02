@@ -2,146 +2,67 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import {
-  LayoutDashboard,
-  Building2,
-  Calendar,
-  FileText,
-  Clock,
-  Database,
-  Users,
-  HelpCircle,
-  UserPlus,
-  MessageSquare,
-  Settings,
-} from "lucide-react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Home, Building2, FileText, Users, Settings, Package2, GanttChartSquare, Clock, Database } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-const navigationItems = [
-  {
-    title: "Übersicht",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Projekte",
-    href: "/construction",
-    icon: Building2,
-  },
-  {
-    title: "Plantafel",
-    href: "/planning",
-    icon: Calendar,
-  },
-  {
-    title: "Rechnungen",
-    href: "/invoices",
-    icon: FileText,
-  },
-  {
-    title: "Zeiten",
-    href: "/timetracking",
-    icon: Clock,
-  },
-  {
-    title: "Stammdaten",
-    href: "/masterdata",
-    icon: Database,
-  },
-  {
-    title: "Kontakte",
-    href: "/contacts",
-    icon: Users,
-  },
-]
-
-const bottomItems = [
-  {
-    title: "Hilfe bekommen",
-    href: "/help",
-    icon: HelpCircle,
-    hasNotification: true,
-  },
-  {
-    title: "Freunden empfehlen",
-    href: "/referral",
-    icon: UserPlus,
-    hasNotification: true,
-  },
-  {
-    title: "Feedback geben",
-    href: "/feedback",
-    icon: MessageSquare,
-  },
-  {
-    title: "Einstellungen",
-    href: "/settings",
-    icon: Settings,
-  },
+const mainNav = [
+  { href: "/dashboard", icon: Home, label: "Übersicht" },
+  { href: "/construction", icon: Building2, label: "Projekte" },
+  { href: "/planning", icon: GanttChartSquare, label: "Plantafel" },
+  { href: "/invoices", icon: FileText, label: "Rechnungen" },
+  { href: "/timetracking", icon: Clock, label: "Zeiten" },
+  { href: "/masterdata", icon: Database, label: "Stammdaten" },
+  { href: "/contacts", icon: Users, label: "Kontakte" },
 ]
 
 export function AppSidebar() {
   const pathname = usePathname()
 
   return (
-    <div className="flex h-full w-[220px] flex-col bg-[#1a1a1a] text-white">
-      {/* Header */}
-      <div className="flex items-center gap-3 p-4 border-b border-gray-700">
-        <div className="flex h-10 w-10 items-center justify-center rounded bg-white text-black font-bold text-sm">
-          CC
-        </div>
-        <div className="flex flex-col">
-          <span className="font-semibold text-sm">CloudCRM Pro</span>
-          <span className="text-xs text-gray-400">Verwaltungssystem</span>
-        </div>
-      </div>
-
-      {/* Main Navigation */}
-      <nav className="flex-1 p-2">
-        <ul className="space-y-1">
-          {navigationItems.map((item) => {
-            const isActive = pathname === item.href
-            return (
-              <li key={item.href}>
+    <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
+      <TooltipProvider>
+        <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
+          <Link
+            href="/dashboard"
+            className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
+          >
+            <Package2 className="h-4 w-4 transition-all group-hover:scale-110" />
+            <span className="sr-only">CloudCRM Pro</span>
+          </Link>
+          {mainNav.map((item) => (
+            <Tooltip key={item.href}>
+              <TooltipTrigger asChild>
                 <Link
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-gray-800",
-                    isActive ? "bg-gray-800 text-white" : "text-gray-300 hover:text-white",
+                    "flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8",
+                    pathname.startsWith(item.href) && "bg-accent text-accent-foreground",
                   )}
                 >
-                  <item.icon className="h-4 w-4" />
-                  {item.title}
+                  <item.icon className="h-5 w-5" />
+                  <span className="sr-only">{item.label}</span>
                 </Link>
-              </li>
-            )
-          })}
-        </ul>
-      </nav>
-
-      {/* Bottom Navigation */}
-      <div className="border-t border-gray-700 p-2">
-        <ul className="space-y-1">
-          {bottomItems.map((item) => {
-            const isActive = pathname === item.href
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-gray-800 relative",
-                    isActive ? "bg-gray-800 text-white" : "text-gray-300 hover:text-white",
-                  )}
-                >
-                  <item.icon className="h-4 w-4" />
-                  {item.title}
-                  {item.hasNotification && <div className="absolute right-2 h-2 w-2 rounded-full bg-red-500" />}
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
-      </div>
-    </div>
+              </TooltipTrigger>
+              <TooltipContent side="right">{item.label}</TooltipContent>
+            </Tooltip>
+          ))}
+        </nav>
+        <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/settings"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+              >
+                <Settings className="h-5 w-5" />
+                <span className="sr-only">Einstellungen</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">Einstellungen</TooltipContent>
+          </Tooltip>
+        </nav>
+      </TooltipProvider>
+    </aside>
   )
 }
